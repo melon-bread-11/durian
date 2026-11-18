@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/site-image";
 import { ArrowUpRight, Check, Plus } from "lucide-react";
 import type { Product } from "@/types/product";
 import { toVariety } from "@/lib/varieties";

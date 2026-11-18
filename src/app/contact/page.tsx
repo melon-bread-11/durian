@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { MessageCircle } from "lucide-react";
-import { sampleProducts } from "@/lib/sample-products";
-import { EnquiryExperience } from "@/components/enquiry-experience";
+import { ContactEnquiry } from "@/components/contact-enquiry";
 export const metadata: Metadata = { title: "Get in touch" };
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ product?: string | string[] }>;
-}) {
-  const query = await searchParams;
+export default function ContactPage() {
   return (
     <>
       <section className="page-intro contact-intro">
@@ -25,12 +20,9 @@ export default async function ContactPage({
         </div>
       </section>
       <div className="shell contact-page">
-        <EnquiryExperience
-          products={sampleProducts}
-          selectedProduct={
-            typeof query.product === "string" ? query.product : undefined
-          }
-        />
+        <Suspense fallback={<p role="status">Loading your enquiry…</p>}>
+          <ContactEnquiry />
+        </Suspense>
       </div>
     </>
   );

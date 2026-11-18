@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { SiteImage as Image } from "@/components/site-image";
 import {
   ArrowUpRight,
   Check,
