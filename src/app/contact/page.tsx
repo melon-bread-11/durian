@@ -1,55 +1,37 @@
 import type { Metadata } from "next";
-import { getCatalogue } from "@/lib/catalogue";
-import { EnquiryForm } from "@/components/enquiry-form";
-import { SampleNotice } from "@/components/sample-notice";
-
+import { MessageCircle } from "lucide-react";
+import { sampleProducts } from "@/lib/sample-products";
+import { EnquiryExperience } from "@/components/enquiry-experience";
 export const metadata: Metadata = { title: "Get in touch" };
-export const dynamic = "force-dynamic";
-
 export default async function ContactPage({
   searchParams,
 }: {
   searchParams: Promise<{ product?: string | string[] }>;
 }) {
-  const [catalogue, query] = await Promise.all([getCatalogue(), searchParams]);
-  const selectedProduct =
-    typeof query.product === "string" ? query.product : undefined;
+  const query = await searchParams;
   return (
-    <div className="shell section">
-      <div className="page-heading">
-        <p className="intro-note">Get in touch</p>
-        <h1>Let’s talk durian.</h1>
-        <p className="lead">
-          Have a variety in mind, or a question about the next harvest? Start
-          here.
-        </p>
-      </div>
-      {catalogue.isSample && <SampleNotice />}
-      <div className="contact-grid">
-        <div className="contact-aside">
-          <h2>
-            A conversation
-            <br />
-            with the farm.
-          </h2>
+    <>
+      <section className="page-intro contact-intro">
+        <div className="shell">
+          <span className="mini-label">
+            <MessageCircle size={16} /> Let’s start a conversation
+          </span>
+          <h1>Let’s talk durian.</h1>
           <p>
-            Tell us what you’re looking for. We’ll confirm harvest timing,
-            availability, pricing, and arrangements with you.
+            Some good fruit. A visit to the orchard. A question or two.
+            <br />
+            Tell us what you have in mind.
           </p>
-          <div className="contact-note">
-            <strong>Planning a farm visit?</strong>
-            <p>
-              Visitor information and the farm’s location will be added here
-              once confirmed.
-            </p>
-          </div>
         </div>
-        <EnquiryForm
-          products={catalogue.products}
-          enabled={Boolean(process.env.DATABASE_URL?.trim())}
-          selectedProduct={selectedProduct}
+      </section>
+      <div className="shell contact-page">
+        <EnquiryExperience
+          products={sampleProducts}
+          selectedProduct={
+            typeof query.product === "string" ? query.product : undefined
+          }
         />
       </div>
-    </div>
+    </>
   );
 }

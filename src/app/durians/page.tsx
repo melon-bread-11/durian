@@ -1,40 +1,34 @@
 import type { Metadata } from "next";
-import { getCatalogue } from "@/lib/catalogue";
-import { ProductCard } from "@/components/product-card";
+import { Leaf } from "lucide-react";
+import { sampleProducts } from "@/lib/sample-products";
+import { CatalogueBrowser } from "@/components/catalogue-browser";
 import { SampleNotice } from "@/components/sample-notice";
-
-export const metadata: Metadata = { title: "The durians" };
-export const dynamic = "force-dynamic";
-
-export default async function DuriansPage() {
-  const { products, isSample } = await getCatalogue();
+import { ContactBanner } from "@/components/contact-banner";
+export const metadata: Metadata = { title: "Our durians" };
+export default function DuriansPage() {
   return (
-    <div className="shell section">
-      <div className="page-heading">
-        <p className="intro-note">The durians</p>
-        <h1>
-          Every variety
-          <br />
-          has a character.
-        </h1>
-        <p className="lead">
-          Explore the selection. Availability and prices are confirmed with each
-          harvest.
-        </p>
-      </div>
-      {isSample && <SampleNotice />}
-      {products.length ? (
-        <div className="product-grid">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+    <>
+      <section className="page-intro catalogue-intro">
+        <div className="shell">
+          <span className="mini-label">
+            <Leaf size={16} /> The orchard selection
+          </span>
+          <h1>Find your flavour.</h1>
+          <p>
+            Some like it sweet. Some like a little edge.
+            <br />
+            There’s a durian character for every kind of palate.
+          </p>
         </div>
-      ) : (
-        <div className="empty-state">
-          <h2>The next harvest is taking shape.</h2>
-          <p>There are no varieties listed yet. Please check back soon.</p>
-        </div>
-      )}
-    </div>
+        <span className="intro-decoration" aria-hidden="true">
+          ✳
+        </span>
+      </section>
+      <section className="shell catalogue-section">
+        <SampleNotice />
+        <CatalogueBrowser products={sampleProducts} />
+      </section>
+      <ContactBanner />
+    </>
   );
 }

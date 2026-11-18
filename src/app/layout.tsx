@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { site } from "@/lib/site";
+import { FarmProvider } from "@/components/farm-provider";
+import { sampleProducts } from "@/lib/sample-products";
+import "@fontsource-variable/manrope";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,9 +23,11 @@ export default function RootLayout({
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
+        <FarmProvider productIds={sampleProducts.map((product) => product.id)}>
+          <SiteHeader />
+          <main id="main">{children}</main>
+          <SiteFooter />
+        </FarmProvider>
       </body>
     </html>
   );
