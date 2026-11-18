@@ -2,6 +2,12 @@
 
 A full-stack learning project built with Next.js App Router, React, TypeScript, Tailwind CSS, Prisma, and PostgreSQL.
 
+## Current frontend preview
+
+The website now includes a photographic home page, searchable catalogue, variety galleries, saved enquiry lists, a local enquiry preview, and an interactive Farm desk demo at `/admin`. Read [the frontend preview guide](docs/FRONTEND-PREVIEW.md) for the current behaviour and [asset notes](docs/ASSETS.md) for the generated imagery.
+
+The new public interface intentionally uses local sample data and does not submit enquiries to the backend. Names and phone numbers are not saved. The server setup described below is preserved for the later integration milestone; configuring a database alone does not connect the new UI. The Farm desk is a public demonstration, not an authenticated admin area.
+
 ## Run locally
 
 Use Node.js 22.12+ on the 22 release line (your installed 22.17.1 works), or a supported Node.js 24+ release. Open a terminal in the connected project folder:
@@ -25,7 +31,7 @@ Without a database, the catalogue displays labelled sample varieties and enquiri
 - Database schema, initial SQL migration, and optional idempotent sample seed.
 - Tests, type checking, production build scripts, and GitHub Actions checks.
 
-Admin authentication, management, uploads, real contact details, spam protection, payments, and deployment are future work. There is no public admin endpoint.
+Real admin authentication, database-backed management, uploads, confirmed farm details, spam protection, payments, and deployment are future work. `/admin` is a frontend demonstration only; no admin API exposes real records.
 
 ## Folder structure
 
