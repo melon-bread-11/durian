@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiteImage as Image } from "@/components/site-image";
+import { TasteRating } from "@/components/taste-rating";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -13,11 +14,17 @@ import {
   Sprout,
 } from "lucide-react";
 import { useFarm } from "@/components/farm-provider";
-import { toVariety, profileLabels } from "@/lib/varieties";
+import {
+  toVariety,
+  profileLabels,
+  tasteMetrics,
+  varietyImage,
+} from "@/lib/varieties";
 import type { Product } from "@/types/product";
 
 export function VarietyDetail({ product }: { product: Product }) {
   const variety = toVariety(product);
+  const fruitImage = varietyImage(product);
   const { items, add } = useFarm();
   const [quantity, setQuantity] = useState(1);
   const savedQuantity = items.find(
@@ -37,14 +44,12 @@ export function VarietyDetail({ product }: { product: Product }) {
         <div className="detail-gallery">
           <div className="detail-photo">
             <Image
-              src={
-                view === "fruit"
-                  ? "/images/durian-harvest.webp"
-                  : "/images/orchard-hero.webp"
-              }
+              src={view === "fruit" ? fruitImage : "/images/orchard-hero.webp"}
               alt={
                 view === "fruit"
-                  ? "Illustrative opened durian with golden flesh"
+                  ? "Generated illustration of an opened " +
+                    product.name +
+                    " durian"
                   : "Illustrative tropical orchard"
               }
               fill
@@ -65,12 +70,7 @@ export function VarietyDetail({ product }: { product: Product }) {
               aria-pressed={view === "fruit"}
               onClick={() => setView("fruit")}
             >
-              <Image
-                src="/images/durian-harvest.webp"
-                alt=""
-                fill
-                sizes="90px"
-              />
+              <Image src={fruitImage} alt="" fill sizes="90px" />
             </button>
             <button
               aria-label="View illustrative orchard photograph"
@@ -79,11 +79,7 @@ export function VarietyDetail({ product }: { product: Product }) {
             >
               <Image src="/images/orchard-hero.webp" alt="" fill sizes="90px" />
             </button>
-            <span>
-              Illustrative imagery.
-              <br />
-              Farm photographs coming soon.
-            </span>
+            <span>Generated illustrations.</span>
           </div>
         </div>
         <div className="detail-copy">
@@ -91,37 +87,25 @@ export function VarietyDetail({ product }: { product: Product }) {
             <Sprout size={16} /> {profileLabels[variety.profile]}
           </span>
           <h1>{product.name}</h1>
+          {(variety.aliases.length > 0 ||
+            (variety.code && variety.code !== product.name)) && (
+            <p className="detail-variety-names">
+              {[
+                variety.code !== product.name ? variety.code : undefined,
+                ...variety.aliases,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          )}
           <p className="detail-character">{variety.character}</p>
-          <p className="detail-description">
-            {variety.notes}. Explore this draft flavour profile and add it to
-            your list for a conversation with the farm.
-          </p>
+          <p className="detail-description">{product.description}</p>
           <div className="taste-profile">
             <h2>A little taste of its character</h2>
-            {[
-              ["Sweetness", variety.sweetness],
-              ["Richness", variety.richness],
-              ["Bittersweet depth", variety.bitterness],
-            ].map(([label, value]) => (
+            {tasteMetrics.map(({ key, label }) => (
               <div className="taste-row" key={label}>
                 <span>{label}</span>
-                <div
-                  className="taste-dots"
-                  role="img"
-                  aria-label={
-                    String(label) +
-                    ": " +
-                    String(value) +
-                    " out of 5, illustrative"
-                  }
-                >
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <i
-                      key={index}
-                      className={index < Number(value) ? "filled" : ""}
-                    />
-                  ))}
-                </div>
+                <TasteRating value={variety[key]} />
               </div>
             ))}
             <small>

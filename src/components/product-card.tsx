@@ -1,11 +1,17 @@
 "use client";
 import Link from "next/link";
 import { SiteImage as Image } from "@/components/site-image";
-import { ArrowUpRight, Check, Plus } from "lucide-react";
+import { ArrowUpRight, Check, Columns2, Plus } from "lucide-react";
 import type { Product } from "@/types/product";
-import { toVariety } from "@/lib/varieties";
+import { toVariety, varietyImage } from "@/lib/varieties";
 import { useFarm } from "@/components/farm-provider";
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  compare,
+}: {
+  product: Product;
+  compare?: { selected: boolean; disabled: boolean; toggle: () => void };
+}) {
   const variety = toVariety(product);
   const { items, add, remove } = useFarm();
   const selected = items.some((item) => item.productId === product.id);
@@ -20,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
           aria-label={"Explore " + product.name}
         >
           <Image
-            src={product.imageUrl || "/images/durian-harvest.webp"}
+            src={varietyImage(product)}
             alt={"Illustrative opened durian for " + product.name}
             fill
             sizes="(max-width: 700px) 100vw, 33vw"
@@ -54,7 +60,9 @@ export function ProductCard({ product }: { product: Product }) {
           <h3>
             <Link href={"/durians/" + product.slug}>{product.name}</Link>
           </h3>
-          <span className="profile-dot" />
+          {variety.code && variety.code !== product.name && (
+            <span className="variety-code">{variety.code}</span>
+          )}
         </div>
         <p>{variety.notes}</p>
         <div className="product-bottom">
@@ -63,12 +71,26 @@ export function ProductCard({ product }: { product: Product }) {
               ? "RM " + product.pricePerKg + " / kg"
               : "Harvest pricing to be confirmed"}
           </span>
-          <Link
-            href={"/durians/" + product.slug}
-            aria-label={"View " + product.name}
-          >
-            <ArrowUpRight size={21} />
-          </Link>
+          {compare ? (
+            <button
+              type="button"
+              className="compare-toggle"
+              aria-label={"Compare " + product.name}
+              aria-pressed={compare.selected}
+              disabled={compare.disabled}
+              onClick={compare.toggle}
+            >
+              {compare.selected ? <Check size={15} /> : <Columns2 size={15} />}
+              {compare.selected ? "Added" : "Compare"}
+            </button>
+          ) : (
+            <Link
+              href={"/durians/" + product.slug}
+              aria-label={"View " + product.name}
+            >
+              <ArrowUpRight size={21} />
+            </Link>
+          )}
         </div>
       </div>
     </article>

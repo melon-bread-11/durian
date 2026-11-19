@@ -23,6 +23,7 @@ import {
 } from "@/lib/farm-desk";
 import { useFarm } from "@/components/farm-provider";
 import { sampleProducts } from "@/lib/sample-products";
+import { varietyImage } from "@/lib/varieties";
 import type { Availability } from "@/types/product";
 
 const storageKey = "family-durian-desk-demo-v1";
@@ -132,7 +133,7 @@ export function FarmDesk() {
                 <td>
                   <div className="table-product">
                     <Image
-                      src="/images/durian-harvest.webp"
+                      src={varietyImage(product)}
                       alt=""
                       width={48}
                       height={48}

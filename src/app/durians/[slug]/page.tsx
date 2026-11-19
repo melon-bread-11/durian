@@ -4,6 +4,7 @@ import { sampleProducts } from "@/lib/sample-products";
 import { VarietyDetail } from "@/components/variety-detail";
 import { ProductCard } from "@/components/product-card";
 import { ContactBanner } from "@/components/contact-banner";
+import { toVariety } from "@/lib/varieties";
 export function generateStaticParams() {
   return sampleProducts.map((product) => ({ slug: product.slug }));
 }
@@ -28,6 +29,15 @@ export default async function DurianPage({
   const { slug } = await params;
   const product = sampleProducts.find((item) => item.slug === slug);
   if (!product) notFound();
+  const profile = toVariety(product).profile;
+  const otherProducts = sampleProducts.filter((item) => item.id !== product.id);
+  const similar = otherProducts.filter(
+    (item) => toVariety(item).profile === profile,
+  );
+  const related = [
+    ...similar,
+    ...otherProducts.filter((item) => !similar.includes(item)),
+  ].slice(0, 2);
   return (
     <>
       <VarietyDetail product={product} />
@@ -44,11 +54,9 @@ export default async function DurianPage({
           </p>
         </div>
         <div className="product-grid related-grid">
-          {sampleProducts
-            .filter((item) => item.id !== product.id)
-            .map((item) => (
-              <ProductCard key={item.id} product={item} />
-            ))}
+          {related.map((item) => (
+            <ProductCard key={item.id} product={item} />
+          ))}
         </div>
       </section>
       <ContactBanner />

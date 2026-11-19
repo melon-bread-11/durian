@@ -3,16 +3,32 @@ import { useMemo, useState } from "react";
 import { ArrowUpRight, Leaf, Search, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
+import { VarietyComparison } from "@/components/variety-comparison";
 import { filterVarieties, type TasteProfile } from "@/lib/farm-ui";
 import { profileLabels, toVariety } from "@/lib/varieties";
 import type { Product } from "@/types/product";
+
+const comparisonLimit = 3;
 
 export function CatalogueBrowser({ products }: { products: Product[] }) {
   const [search, setSearch] = useState("");
   const [profile, setProfile] = useState<TasteProfile>("all");
   const [sort, setSort] = useState<"featured" | "name">("featured");
+  const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const varieties = useMemo(() => products.map(toVariety), [products]);
   const results = filterVarieties(varieties, search, profile, sort);
+  const compared = comparisonIds.flatMap((id) =>
+    varieties.filter((variety) => variety.id === id),
+  );
+
+  function toggleComparison(id: string) {
+    setComparisonIds((current) => {
+      if (current.includes(id)) return current.filter((item) => item !== id);
+      if (current.length >= comparisonLimit) return current;
+      return [...current, id];
+    });
+  }
+
   function reset() {
     setSearch("");
     setProfile("all");
@@ -25,7 +41,7 @@ export function CatalogueBrowser({ products }: { products: Product[] }) {
           <Search size={19} />
           <input
             aria-label="Search durian varieties"
-            placeholder="Find your favourite variety..."
+            placeholder="Search by name, code, or tasting note"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -66,11 +82,29 @@ export function CatalogueBrowser({ products }: { products: Product[] }) {
           {results.length} {results.length === 1 ? "variety" : "varieties"}
         </span>
       </div>
+      <VarietyComparison
+        varieties={compared}
+        limit={comparisonLimit}
+        onRemove={toggleComparison}
+        onClear={() => setComparisonIds([])}
+      />
       {results.length ? (
         <div className="product-grid">
-          {results.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {results.map((product) => {
+            const selected = comparisonIds.includes(product.id);
+            return (
+              <ProductCard
+                key={product.id}
+                product={product}
+                compare={{
+                  selected,
+                  disabled:
+                    !selected && comparisonIds.length >= comparisonLimit,
+                  toggle: () => toggleComparison(product.id),
+                }}
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="empty-state catalogue-empty">

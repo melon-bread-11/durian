@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useFarm } from "@/components/farm-provider";
+import { varietyImage } from "@/lib/varieties";
 import { enquirySchema } from "@/lib/validation";
 import type { Product } from "@/types/product";
 
@@ -156,7 +157,7 @@ export function EnquiryExperience({
               <div className="selection-item" key={item.productId}>
                 <div className="selection-thumb">
                   <Image
-                    src="/images/durian-harvest.webp"
+                    src={varietyImage(item.product!)}
                     alt=""
                     fill
                     sizes="72px"

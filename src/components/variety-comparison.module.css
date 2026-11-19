@@ -1,0 +1,140 @@
+.panel {
+  margin: 0 0 34px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.icon {
+  color: var(--forest);
+}
+
+.heading {
+  flex: 1 1 170px;
+}
+
+.heading h2 {
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.heading p,
+.note {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.selection button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 5px 12px;
+  border: 1px solid #c8d4c1;
+  border-radius: 6px;
+  color: var(--forest);
+  background: white;
+  font-size: 12px;
+}
+
+.selection button:hover {
+  border-color: var(--forest);
+}
+
+.results {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.scroller {
+  overflow-x: auto;
+  margin-top: 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: white;
+}
+
+.table {
+  min-width: 380px;
+  width: 100%;
+  font-size: 13px;
+}
+
+.table th,
+.table td {
+  padding: 10px 14px;
+  font-size: 13px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th:first-child {
+  min-width: 106px;
+  max-width: 135px;
+  background: #fafbf8;
+}
+
+.table thead th:not(:first-child) {
+  min-width: 130px;
+  background: white;
+}
+
+.table th a {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 7px;
+  font-weight: 700;
+  color: var(--forest);
+}
+
+.table th a:hover {
+  text-decoration: underline;
+}
+
+.table th img {
+  width: min(100%, 136px);
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.table :global(.taste-dots) i {
+  width: 13px;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: 15px;
+  }
+
+  .toolbar {
+    gap: 10px 14px;
+  }
+
+  .selection button {
+    min-height: 44px;
+  }
+
+  .table td,
+  .table th {
+    padding: 9px 10px;
+  }
+}
