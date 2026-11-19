@@ -1171,8 +1171,21 @@ svg {
 }
 .about-story {
   display: grid;
-  grid-template-columns: 0.75fr 1.2fr;
-  gap: 100px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(36px, 6vw, 86px);
+}
+.about-story figure {
+  margin: 0;
+}
+.about-story-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 4;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--paper);
 }
 .about-story h2 {
   margin-bottom: 25px;
@@ -2082,7 +2095,6 @@ td select {
   }
   .about-story {
     gap: 40px;
-    grid-template-columns: 0.6fr 1fr;
   }
   .value-grid {
     gap: 30px;
@@ -2516,7 +2528,7 @@ td select {
   }
   .about-story {
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 28px;
   }
   .about-story h2 {
     font-size: 34px;

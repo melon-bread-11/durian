@@ -8,6 +8,7 @@ import {
   TreeDeciduous,
 } from "lucide-react";
 import { FarmImage } from "@/components/farm-image";
+import { SiteImage } from "@/components/site-image";
 import { ContactBanner } from "@/components/contact-banner";
 export const metadata: Metadata = { title: "Our farm" };
 export default function AboutPage() {
@@ -42,8 +43,21 @@ export default function AboutPage() {
         </p>
       </div>
       <section className="shell about-story section">
-        <span className="mini-label">What this place means to us</span>
+        <figure>
+          <SiteImage
+            src="/images/orchard-care.webp"
+            alt="A grower holds an opened durian with golden flesh in a shaded orchard"
+            className="about-story-image"
+            width={1200}
+            height={960}
+            sizes="(max-width: 600px) calc(100vw - 36px), (max-width: 1280px) 42vw, 510px"
+          />
+          <figcaption className="image-caption">
+            AI-generated orchard scene.
+          </figcaption>
+        </figure>
         <div>
+          <span className="mini-label">What this place means to us</span>
           <h2>
             A slower pace.
             <br />A little more care.
