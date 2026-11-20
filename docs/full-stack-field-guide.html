@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A reusable workflow for building a full-stack Next.js project, from the first page to a deployed database-backed feature.">
+  <title>Full-stack project guide</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f8f7f1;
+      --surface: #fffefa;
+      --ink: #1a2926;
+      --muted: #4d625b;
+      --accent: #16634f;
+      --dark: #173a32;
+      --line: #d2ddd5;
+      --tint: #e9f0e7;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 1rem; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 1rem/1.65 system-ui, sans-serif;
+    }
+    h1, h2 { font-family: Georgia, serif; font-weight: 500; letter-spacing: -.035em; }
+    h1, h2, h3, p, ul, ol, figure { margin-top: 0; }
+    h1 { font-size: clamp(2.65rem, 7vw, 4.9rem); line-height: 1; margin-bottom: 1rem; }
+    h2 { font-size: clamp(1.85rem, 4vw, 2.55rem); line-height: 1.12; margin-bottom: 1rem; }
+    h3 { font-size: 1.14rem; line-height: 1.4; margin-bottom: .45rem; }
+    p, ul, ol, figure { margin-bottom: 1rem; }
+    ul, ol { padding-inline-start: 1.4rem; }
+    li + li { margin-top: .32rem; }
+    a { color: var(--accent); text-underline-offset: .2em; }
+    a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+    code { font: .9em/1.5 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+    pre {
+      padding: .9rem 1rem;
+      border-radius: .5rem;
+      background: #edf1e9;
+      color: var(--ink);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      margin: .7rem 0 1rem;
+    }
+    .wrap { width: min(100% - 2rem, 62rem); margin-inline: auto; }
+    .hero { background: var(--dark); color: #fffefa; padding: clamp(2.6rem, 8vw, 5rem) 0 2rem; }
+    .hero p { max-width: 61ch; color: #ecf4ed; margin-bottom: 1.8rem; }
+    nav ul { display: flex; flex-wrap: wrap; column-gap: 1.25rem; row-gap: .3rem; padding: 0; margin: 0; list-style: none; }
+    nav li + li { margin: 0; }
+    nav a { color: #ecf4ed; display: inline-block; padding-block: .22rem; }
+    main { padding-block: 1rem 4rem; }
+    section { padding-block: 1.8rem; border-bottom: 1px solid var(--line); }
+    section > :last-child, article > :last-child { margin-bottom: 0; }
+    .stack, .files { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(0, 2.1fr); margin: 0; }
+    .stack dt, .stack dd, .files dt, .files dd { margin: 0; padding: .55rem 0; border-top: 1px solid var(--line); }
+    .stack dt, .files dt { font-weight: 650; padding-right: 1rem; }
+    .files { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+    .request {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.3rem;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem;
+    }
+    .request li { position: relative; margin: 0; padding: .7rem .85rem; border-radius: .45rem; background: var(--tint); }
+    .request li + li::before { content: "→"; position: absolute; left: -1.15rem; top: .65rem; color: var(--accent); }
+    .request strong, .request span { display: block; }
+    .request span { color: var(--muted); font-size: .89rem; }
+    .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: .85rem; }
+    .steps > li { margin: 0; }
+    article { padding: clamp(.9rem, 3vw, 1.4rem); background: var(--surface); border: 1px solid var(--line); border-radius: .65rem; }
+    .number { margin-right: .3rem; color: var(--accent); }
+    .check { color: var(--accent); font-weight: 650; }
+    .note { background: var(--tint); padding: .75rem 1rem; border-left: .25rem solid var(--accent); }
+    .source { font-size: .91rem; }
+    details { margin: .6rem 0 1rem; }
+    summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+    @media (max-width: 40rem) {
+      .request { grid-template-columns: 1fr; gap: .75rem; }
+      .request li + li::before { content: "↓"; left: 1rem; top: -.95rem; font-size: .85rem; }
+      .request strong, .request span { display: inline; }
+      .request strong { margin-right: .3rem; }
+      .files { display: block; }
+      .files dt { padding: .45rem 0 0; }
+      .files dd { border: 0; padding: 0 0 .55rem; }
+    }
+    @media (max-width: 28rem) {
+      .stack { grid-template-columns: 7rem minmax(0, 1fr); }
+    }
+    @media print {
+      :root { --paper: white; --surface: white; }
+      .hero { background: white; color: var(--ink); padding: 0; }
+      .hero p { color: var(--ink); }
+      .wrap { width: 100%; }
+      nav { display: none; }
+      main, section { padding-block: .65rem; }
+      article, pre, figure { break-inside: avoid; }
+      h2, h3, dt { break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1>Full-stack project guide</h1>
+      <p>Build one feature from the browser to the database and back, then deploy it. Use the durian farm enquiry as an example and swap in your own feature for the next project.</p>
+      <nav aria-label="Guide sections">
+        <ul>
+          <li><a href="#stack">Stack</a></li>
+          <li><a href="#request">Request flow</a></li>
+          <li><a href="#workflow">Build order</a></li>
+          <li><a href="#files">File map</a></li>
+          <li><a href="#durian">Durian commands</a></li>
+          <li><a href="#next-project">Project template</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section id="stack">
+      <h2>A stack you can reuse</h2>
+      <dl class="stack">
+        <dt>Frontend</dt>
+        <dd><strong>Next.js App Router, React, TypeScript, Tailwind CSS.</strong> Next.js maps files to pages, React builds the interface, TypeScript checks types, and Tailwind styles the page.</dd>
+        <dt>Backend</dt>
+        <dd><strong>Next.js Route Handlers on Node.js.</strong> Keep the API in the same app. Add a file named <code>route.ts</code> and export an HTTP method like <code>GET</code> or <code>POST</code>.</dd>
+        <dt>Database</dt>
+        <dd><strong>Supabase Postgres + Prisma ORM.</strong> Supabase hosts the database. Prisma lets TypeScript code query it and tracks changes to the tables through migrations.</dd>
+        <dt>Git &amp; hosting</dt>
+        <dd><strong>GitHub + Vercel.</strong> GitHub stores the code and runs checks. Vercel can host the full Next.js app, including the API routes. GitHub Pages can host a static preview.</dd>
+      </dl>
+    </section>
+
+    <section id="request">
+      <h2>Follow one enquiry</h2>
+      <figure>
+        <ol class="request" aria-label="Steps in an enquiry request">
+          <li><strong>Browser</strong> <span>Submit the form</span></li>
+          <li><strong>Next.js API</strong> <span>Validate the request</span></li>
+          <li><strong>Prisma</strong> <span>Insert the enquiry</span></li>
+          <li><strong>Supabase Postgres</strong> <span>Store the row</span></li>
+        </ol>
+        <figcaption>After the database saves the row, the API returns <code>201 Created</code> and the browser shows confirmation. Invalid input returns an error the form can display. The database password stays on the server.</figcaption>
+      </figure>
+      <p class="note">In the current durian site, the enquiry form previews the submission. The API already exists, and connecting the form to it is a separate step.</p>
+    </section>
+
+    <section id="workflow">
+      <h2>Build order</h2>
+      <ol class="steps">
+        <li>
+          <article>
+            <h3><span class="number">1.</span> Pick one action</h3>
+            <p>Write one sentence about who uses the site and what they can do. For the farm, a visitor can pick a durian and send an enquiry. Sketch the catalogue, the form, and the confirmation. List the data you need. In this example, it’s a <code>Product</code> and an <code>Enquiry</code> linked to that product.</p>
+            <p><span class="check">Check</span> You can describe the first successful user journey in one sentence.</p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3><span class="number">2.</span> Scaffold and connect GitHub</h3>
+            <p>Install a supported Node.js version. Run these PowerShell commands from the folder where you keep projects. In the setup prompts, choose TypeScript, Tailwind, App Router, and the <code>src/</code> directory.</p>
+            <pre><code>npx.cmd create-next-app@latest my-site
+cd my-site
+npm.cmd run dev</code></pre>
+            <p>Open the local URL printed in the terminal. Create an empty GitHub repo for your new app, then use a second terminal in <code>my-site</code> to connect it.</p>
+            <details>
+              <summary>Show the first Git push</summary>
+              <pre><code>git status
+git add .
+git commit -m "Start website project"
+git branch -M main
+git remote add origin https://github.com/YOUR-USER/my-site.git
+git push -u origin main</code></pre>
+              <p>If the scaffold already made a commit and the working tree is clean, skip <code>git add</code> and <code>git commit</code>. If <code>origin</code> already exists, check it with <code>git remote -v</code> before adding a remote. Preview what you’re staging and keep real <code>.env</code> files ignored.</p>
+            </details>
+            <p><span class="check">Check</span> The starter page opens locally and the starter files appear on GitHub.</p>
+            <p class="source"><a href="https://nextjs.org/docs/app/getting-started/installation">Next.js install guide</a> · <a href="https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github">GitHub first push guide</a></p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3><span class="number">3.</span> Build the frontend with sample data</h3>
+            <p>Start with <code>src/app/page.tsx</code> and a second page such as <code>src/app/durians/page.tsx</code>. Put reusable cards and forms in <code>src/components/</code>. Store a few sample items in <code>src/lib/sample-products.ts</code> and your images in <code>public/</code>.</p>
+            <p>Try the journey on a phone-sized screen. Give the form a submitting state, a success message, and a place to show errors. In Next.js, mark the interactive component that uses browser state or event handlers with <code>"use client"</code>.</p>
+            <p><span class="check">Check</span> You can try the whole journey using sample data.</p>
+            <p class="source"><a href="https://nextjs.org/docs/app/getting-started/server-and-client-components">Next.js server and client components</a></p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3><span class="number">4.</span> Create the database and API</h3>
+            <ol>
+              <li>Create a Supabase development project. When it’s active, open <strong>Connect → Session pooler</strong> on port <code>5432</code>. Put the connection string in your local <code>.env</code> under <code>DATABASE_URL</code>.</li>
+              <li>Use the Prisma setup guide for your installed version. The durian app uses Prisma 7 with the PostgreSQL adapter. Define the models in <code>prisma/schema.prisma</code> and keep Prisma in a server-only module such as <code>src/lib/db.ts</code>.</li>
+              <li>On a fresh development database, create and apply a migration with <code>npx.cmd prisma migrate dev --name init</code>, then run <code>npx.cmd prisma generate</code>. <code>migrate dev</code> requires a shadow database to replay migrations safely. If hosted permissions block it, configure a separate development shadow database or generate the migration against local Postgres. When the migration already exists, apply it with <code>npx.cmd prisma migrate deploy</code>.</li>
+              <li>Build <code>GET /api/durians</code> to list products and <code>POST /api/enquiries</code> to create an enquiry. Validate incoming fields on the server, check that the product can accept enquiries, and return success after the insert.</li>
+            </ol>
+            <p class="note">Keep <code>DATABASE_URL</code> in server-side environment variables. Commit an <code>.env.example</code> with placeholders so another developer can see which variables to set.</p>
+            <p><span class="check">Check</span> The local GET endpoint returns a database-backed catalogue and a test POST creates a row you can see in Supabase.</p>
+            <p class="source"><a href="https://supabase.com/docs/guides/database/prisma">Supabase connection guide</a> · <a href="https://www.prisma.io/docs/v7/prisma-orm/quickstart/postgresql">Prisma 7 setup</a> · <a href="https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database">Prisma shadow database guide</a> · <a href="https://nextjs.org/docs/app/api-reference/file-conventions/route">Next.js Route Handlers</a></p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3><span class="number">5.</span> Wire the frontend to the backend</h3>
+            <p>Populate the catalogue with the saved product IDs. Submit the form with <code>fetch("/api/enquiries", …)</code> using <code>POST</code> and a JSON body. Include <code>productId</code>, <code>customerName</code>, and <code>phone</code>. Read the response and show either confirmation or an error.</p>
+            <ul>
+              <li>Valid submission → confirmation and one new database row.</li>
+              <li>Missing phone or unavailable product → a clear error and no row.</li>
+              <li>Request fails → keep the entered values so the user can retry.</li>
+            </ul>
+            <p><span class="check">Check</span> A test enquiry travels from the browser to the database without opening the dashboard to enter it manually.</p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3><span class="number">6.</span> Deploy and test the live URL</h3>
+            <ol>
+              <li>Run your tests and <code>npm.cmd run build</code> before pushing. Add GitHub Actions checks once the commands work locally.</li>
+              <li>Import the repo into Vercel and choose the folder containing <code>package.json</code> as the project root. Set server environment variables in Vercel. Use separate databases for previews and production, and configure the Prisma connection for the host.</li>
+              <li>Apply the committed migrations to the target database with <code>prisma migrate deploy</code> in the deployment workflow before serving traffic that depends on the new schema. Make sure the build runs <code>prisma generate</code>, including on a clean install.</li>
+              <li>Open the deployed URL and repeat a safe test with dummy data. Look for the expected database row and check the host’s logs if a request fails.</li>
+            </ol>
+            <p class="note"><strong>Static option.</strong> For a brochure site or a preview with sample data, GitHub Pages can publish the static export. In the durian repo, <code>npm.cmd run build:pages</code> generates <code>out/</code> and GitHub Actions publishes it. A live form on that static site needs an API hosted separately.</p>
+            <p><span class="check">Check</span> The live URL serves the site and the feature works in the intended environment.</p>
+            <p class="source"><a href="https://vercel.com/docs/git/vercel-for-github">Vercel GitHub deployments</a> · <a href="https://vercel.com/docs/environment-variables">Vercel environment variables</a> · <a href="https://nextjs.org/docs/app/guides/static-exports">Next.js static exports</a> · <a href="https://www.prisma.io/docs/orm/v7/reference/prisma-cli-reference#prisma-migrate">Prisma Migrate commands</a></p>
+          </article>
+        </li>
+      </ol>
+    </section>
+
+    <section id="files">
+      <h2>File map</h2>
+      <dl class="files">
+        <dt><code>src/app/page.tsx</code> and <code>layout.tsx</code></dt>
+        <dd>The homepage and the shared layout. <code>src/app/contact/page.tsx</code> creates <code>/contact</code>.</dd>
+        <dt><code>src/components/</code>, <code>src/app/globals.css</code>, <code>public/</code></dt>
+        <dd>Reusable interface pieces, site-wide styles, and static assets such as images.</dd>
+        <dt><code>src/app/api/enquiries/route.ts</code></dt>
+        <dd>The backend endpoint for <code>POST /api/enquiries</code>.</dd>
+        <dt><code>src/lib/db.ts</code> and <code>src/lib/validation.ts</code></dt>
+        <dd>Server database access and rules for incoming data.</dd>
+        <dt><code>prisma/schema.prisma</code>, <code>prisma/migrations/</code>, <code>prisma.config.ts</code></dt>
+        <dd>The database models, saved SQL changes, and Prisma CLI configuration.</dd>
+        <dt><code>.env</code>, <code>.env.example</code>, <code>.gitignore</code></dt>
+        <dd>Local secrets, shareable placeholders, and the rules that keep secrets and generated files out of Git.</dd>
+        <dt><code>package.json</code> and <code>package-lock.json</code></dt>
+        <dd>Dependencies, runnable scripts, and the lockfile for repeatable installs.</dd>
+        <dt><code>next.config.ts</code> and <code>tsconfig.json</code></dt>
+        <dd>Next.js build settings and TypeScript compiler settings.</dd>
+        <dt><code>tests/</code>, <code>.github/workflows/</code>, <code>README.md</code></dt>
+        <dd>Tests, automated GitHub jobs, and setup instructions for the next developer.</dd>
+      </dl>
+    </section>
+
+    <section id="durian">
+      <h2>Commands in your durian repo</h2>
+      <p>Run these from the folder containing the durian app’s <code>package.json</code>. The database commands expect <code>DATABASE_URL</code> in your local <code>.env</code>.</p>
+      <dl class="files">
+        <dt><code>npm.cmd install</code></dt><dd>Install dependencies and generate the Prisma client through the repo’s <code>postinstall</code> script.</dd>
+        <dt><code>npm.cmd run dev</code></dt><dd>Start the local Next.js server with live reload.</dd>
+        <dt><code>npm.cmd run db:deploy</code></dt><dd>Apply the migrations already saved in the repo to your configured database.</dd>
+        <dt><code>npm.cmd run db:seed</code></dt><dd>Add sample durian varieties to the development database.</dd>
+        <dt><code>npm.cmd test</code> and <code>npm.cmd run typecheck</code></dt><dd>Run the tests and verify types before pushing.</dd>
+        <dt><code>npm.cmd run build</code> then <code>npm.cmd start</code></dt><dd>Build the production app, then run that build locally.</dd>
+        <dt><code>npm.cmd run build:pages</code></dt><dd>Build the static GitHub Pages preview into <code>out/</code>.</dd>
+      </dl>
+    </section>
+
+    <section id="next-project">
+      <h2>Copy this into your next README</h2>
+      <pre><code>Project goal
+Who uses it and what should they be able to do?
+
+First feature
+A [user] can [action] and sees [result].
+
+Frontend
+Which pages and components does that action need?
+
+Backend
+Which endpoint handles it? What should it validate?
+
+Database
+Which tables and fields store the result?
+
+Proof it works
+What will I check on localhost and on the live URL?
+
+Run and deploy
+Which commands, environment variables, and host does the app use?</code></pre>
+    </section>
+  </main>
+</body>
+</html>
